@@ -89,14 +89,6 @@ function xr(args) {
       })
     }
 
-    xhr.open(
-      opts.method,
-      opts.params
-        ? `${opts.url.split('?')[0]}?${encode(opts.params)}`
-        : opts.url,
-      true
-    );
-
     xhr.addEventListener(Events.LOAD, () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         let data = null;
@@ -124,6 +116,16 @@ function xr(args) {
       if (!{}.hasOwnProperty.call(opts.events, k)) continue;
       xhr.addEventListener(k, opts.events[k].bind(null, xhr), false);
     }
+    
+    // open xhr after addEventListener
+    // see: http://stackoverflow.com/a/16038947
+    xhr.open(
+      opts.method,
+      opts.params
+        ? `${opts.url.split('?')[0]}?${encode(opts.params)}`
+        : opts.url,
+      true
+    );
 
     const data = (typeof opts.data === 'object' && !opts.raw)
         ? opts.dump(opts.data)
